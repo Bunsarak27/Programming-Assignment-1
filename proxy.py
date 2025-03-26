@@ -24,7 +24,7 @@ if not os.path.exists('./cache'):
 # Create a server socket, bind it to a port and start listening
 try:
     # ~~~~ INSERT CODE ~~~~
-    serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a TCP socket using IPv4
     # ~~~~ END CODE INSERT ~~~~
     print('Created socket')
 except:
@@ -33,7 +33,7 @@ except:
 
 try:
     # ~~~~ INSERT CODE ~~~~
-    serverSocket.bind((proxyHost, proxyPort))
+    serverSocket.bind((proxyHost, proxyPort)) # Bind socket to the specified host and port
     # ~~~~ END CODE INSERT ~~~~
     print('Port is bound')
 except:
@@ -42,7 +42,7 @@ except:
 
 try:
     # ~~~~ INSERT CODE ~~~~
-    serverSocket.listen(5)
+    serverSocket.listen(5) # Start listening for incoming connections 5 connection max
     # ~~~~ END CODE INSERT ~~~~
     print('Listening to socket')
 except:
@@ -56,7 +56,7 @@ while True:
 
     try:
         # ~~~~ INSERT CODE ~~~~
-        clientSocket, addr = serverSocket.accept()
+        clientSocket, addr = serverSocket.accept() # accept a client connection and create a socket to communicate
         # ~~~~ END CODE INSERT ~~~~
         print('Received a connection')
     except:
@@ -111,11 +111,11 @@ while True:
         fileExists = os.path.isfile(cacheLocation)
 
         if fileExists:
-            file_age = int(os.path.getmtime(cacheLocation))
+            file_age = int(os.path.getmtime(cacheLocation)) # Check for cache freshness using file modification time
             current_time = int(time.time())
             age_seconds = current_time - file_age
 
-            meta_path = cacheLocation + ".meta"
+            meta_path = cacheLocation + ".meta" # Check for max-age directive in .meta file
             if os.path.exists(meta_path):
                 with open(meta_path, 'r') as meta:
                     meta_data = meta.read()
@@ -144,6 +144,7 @@ while True:
         print('Connecting to:\t\t' + hostname + '\n')
 
         try:
+            # Resolve hostname to IP and connect to origin server on port 80
             address = socket.gethostbyname(hostname)
             # ~~~~ INSERT CODE ~~~~
             originServerSocket.connect((address, 80))
@@ -171,7 +172,8 @@ while True:
                     break
                 originResponse += data
             # ~~~~ END CODE INSERT ~~~~
-
+            
+            # Check for HTTP 301/302 redirect responses and forward only
             status_line = originResponse.split(b'\r\n', 1)[0]
             if b'301' in status_line or b'302' in status_line:
                 print('[REDIRECT] Detected 301/302 response')
